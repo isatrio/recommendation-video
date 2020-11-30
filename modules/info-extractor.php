@@ -39,6 +39,7 @@ class InfoExtractor {
 
 	private function normalization($text) {
 
+	    $text = strip_tags($text);
 	    $docs = preg_split('/\r\n|\r|\n/',$text);
 	    $result = [];
 
