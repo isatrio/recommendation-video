@@ -22,7 +22,7 @@ class ShowInPost {
             $id = get_the_ID();
             $value = \get_post_meta( $id, 'keywords_meta', true );
 
-            return $content . '<div class="dm-player" owners="suaradotcom" showInfoCard="true" keywordsSelector=".vr-keywords"></div> <p class="vr-keywords" style="display: none">' . $value . '</p>';
+            return $content . '<div class="dm-player" owners="kompastv,suaradotcom" showInfoCard="true" keywordsSelector=".vr-keywords" sort="relevance"></div> <p class="vr-keywords" style="display: none">' . $value . '</p>';
         }
 
         return $content;

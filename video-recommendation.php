@@ -27,6 +27,5 @@ require VR_PATH . 'modules/info-extractor.php';
 require VR_PATH . 'modules/keywords-meta.php';
 require VR_PATH . 'modules/show-in-post.php';
 
-
 new VR\KeywordsMeta();
 new VR\ShowInPost();

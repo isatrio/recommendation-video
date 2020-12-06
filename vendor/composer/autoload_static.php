@@ -16,10 +16,15 @@ class ComposerStaticInit7e55818c41a75968e653f5b738faf0e2
         ),
     );
 
+    public static $classMap = array (
+        'Composer\\InstalledVersions' => __DIR__ . '/..' . '/composer/InstalledVersions.php',
+    );
+
     public static function getInitializer(ClassLoader $loader)
     {
         return \Closure::bind(function () use ($loader) {
             $loader->prefixesPsr0 = ComposerStaticInit7e55818c41a75968e653f5b738faf0e2::$prefixesPsr0;
+            $loader->classMap = ComposerStaticInit7e55818c41a75968e653f5b738faf0e2::$classMap;
 
         }, null, ClassLoader::class);
     }
