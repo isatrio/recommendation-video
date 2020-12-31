@@ -6,6 +6,12 @@ use Sastrawi\StopWordRemover\StopWordRemoverFactory;
 use Sastrawi\StopWordRemover\StopWordRemover;
 use Sastrawi\Dictionary\ArrayDictionary;
 
+use NlpTools\Documents\DocumentInterface;
+use NlpTools\Documents\TrainingSet;
+use NlpTools\Documents\TokensDocument;
+use NlpTools\FeatureFactories\FunctionFeatures;
+use NlpTools\Analysis\Idf;
+
 /**
  * Info Extractor
  * 
@@ -13,44 +19,69 @@ use Sastrawi\Dictionary\ArrayDictionary;
 
 defined( 'ABSPATH' ) || exit;
 
+class TfIdfFeatureFactory extends FunctionFeatures
+{
+    protected $idf;
+
+    public function __construct(Idf $idf, array $functions)
+    {
+        parent::__construct($functions);
+        $this->modelFrequency();
+        $this->idf = $idf;
+    }
+
+    public function getFeatureArray($class, DocumentInterface $doc)
+    {
+        $frequencies = parent::getFeatureArray($class, $doc);
+        foreach ($frequencies as $term=>&$value) {
+            $value = $value*$this->idf[$term];
+        }
+        return $frequencies;
+    }
+}
+
 class InfoExtractor {
 
     private $wordCounter = [];
     private $allWords = [];
     private $tfidf = [];
 
+    private $tset;
+
 	public function __construct($text) {
+	    $this->tset = new TrainingSet();
 		$this->tfidf($text);
 	}
 
 	private function tfidf($text) {
 		$docs = $this->normalization($text);
 
-		$tokens = $this->tokenization($docs);
-
-		$groups = $this->grouping($tokens);
-
-		$tf = $this->TF($groups);
-
- 		$idf = $this->IDF($groups);
-
- 		foreach ($groups as $index => $words) {
- 		    foreach ($words as $word => $value) {
-                $this->tfidf[$word] = $tf[$index][$word] * $idf[$word];
-            }
-        }
+//		$tokens = $this->tokenization($docs);
+//
+//		$groups = $this->grouping($tokens);
+//
+//		$tf = $this->TF($groups);
+//
+// 		$idf = $this->IDF($groups);
+//
+// 		foreach ($groups as $index => $words) {
+// 		    foreach ($words as $word => $value) {
+//                $this->tfidf[$word] = $tf[$index][$word] * $idf[$word];
+//            }
+//        }
 
 // 		echo '<pre>';
-// 		print_r($docs);
+// 		print_r($this->tfidf);
 // 		echo '</pre>';
 // 		die();
+
 	}
 
     /**
      * normalization($text)
      *
      * It's a first step function to normalize the text. In this process
-     * the text also
+     * the text will also remove the stop words
      *
      * @param $text
      * @return array
@@ -60,8 +91,10 @@ class InfoExtractor {
 	    // Remove all html tag
 	    $text = strip_tags($text);
 
-	    // Spliting the words from the paragraph
-	    $docs = preg_split('/\r\n|\r|\n/',$text);
+	    // Spliting the words from the sentences
+//	    $docs = preg_split('/\r\n|\r|\n/',$text);
+
+	    $docs = explode('.', $text);
 
 	    $result = [];
 
@@ -71,24 +104,46 @@ class InfoExtractor {
             // Process the text
             $doc = strtolower($doc);
 
-            // Clean up string from stop words
-//            $stopWords = new StopWordRemoverFactory();
-
-            $newDictionary = new ArrayDictionary($this->additionalStopWords());
-            $remover = new StopWordRemover($newDictionary);
-            $clean = $remover->remove($doc);
-
-//            print_r($doc); echo '<br />';
-//            print_r($clean); echo '<br />';
-
             $stemmerFactory = new StemmerFactory();
             $stemmer = $stemmerFactory->createStemmer();
+            $stemmed = $stemmer->stem($doc);
 
-            $result[] = $stemmer->stem($clean);
+
+            // Clean up string from stop words
+            $newDictionary = new ArrayDictionary($this->additionalStopWords());
+            $remover = new StopWordRemover($newDictionary);
+            $temp = $remover->remove($stemmed);
+//            $result[] = $temp;
+
+            // Add document to a tset to be processed
+            $this->tset->addDocument(
+                "",
+                new TokensDocument(
+                    explode( " ", $temp)
+                )
+            );
         }
-//        die();
 
-        return $result;
+//        $idf = new Idf($this->tset);
+//
+//        $ff = new TfIdfFeatureFactory(
+//            $idf,
+//            array(
+//                function ($c, $d) {
+//                    return $d->getDocumentData();
+//                }
+//            )
+//        );
+//
+//
+//	    echo "<pre>";
+//        print_r($ff->getFeatureArray("", $this->tset[2]));
+////	    print_r($result);
+//	    echo "</pre>";
+//
+//	    die();
+
+//        return $ff->getFeatureArray("", $this->tset[0]);
 	}
 
 	private function additionalStopWords() {
@@ -181,7 +236,7 @@ class InfoExtractor {
 		return $idf;
 	}
 
-	private function avarage($tfidf) {
+	private function average($tfidf) {
         $totalScore = 0;
 
         foreach($tfidf as $word => $score) {
@@ -192,13 +247,25 @@ class InfoExtractor {
     }
 
     public function generateSummary() {
-        $treshold = 1.6 * $this->avarage($this->tfidf);
+        $idf = new Idf($this->tset);
+
+        $ff = new TfIdfFeatureFactory(
+            $idf,
+            array(
+                function ($c, $d) {
+                    return $d->getDocumentData();
+                }
+            )
+        );
+
+        $threshold = 1.6; // * $this->average($this->tfidf);
         $summary = [];
-	    foreach($this->tfidf as $word => $score) {
-	        if ($score > $treshold) $summary[] = $word;
+        $tfidf = $ff->getFeatureArray("", $this->tset[0]);
+	    foreach($tfidf as $word => $score) {
+	        if ($score > $threshold) $summary[] = $word;
         }
 
-	    return $summary;
+        return $summary;
     }
 
 }

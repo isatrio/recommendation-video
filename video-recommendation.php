@@ -29,3 +29,22 @@ require VR_PATH . 'modules/show-in-post.php';
 
 new VR\KeywordsMeta();
 new VR\ShowInPost();
+
+
+//use \NlpTools\Tokenizers\WhitespaceTokenizer;
+//use \NlpTools\Documents\TokensDocument;
+//
+//$s1 = "Please allow me to introduce myself
+//            I'm a man of wealth and taste";
+//$s2 = "Hello, I love you, won't you tell me your name
+//            Hello, I love you, let me jump in your game";
+//
+//$tok = new WhitespaceTokenizer();
+//
+//
+//$stones = new TokensDocument($tok->tokenize($s1)); // $stones now represents the "Sympathy for the devil" song
+//$doors = new TokensDocument($tok->tokenize($s2)); // $doors now represents the "Hello, I love you" song
+//
+//print_r($stones);
+//print_r($doors);
+//die();

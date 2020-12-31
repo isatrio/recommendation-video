@@ -1,5 +1,6 @@
 {
     "require": {
-        "sastrawi/sastrawi": "^1"
+        "sastrawi/sastrawi": "^1",
+        "nlp-tools/nlp-tools": "^0.1.3"
     }
 }

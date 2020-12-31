@@ -14,6 +14,13 @@ class ComposerStaticInit7e55818c41a75968e653f5b738faf0e2
                 0 => __DIR__ . '/..' . '/sastrawi/sastrawi/src',
             ),
         ),
+        'N' => 
+        array (
+            'NlpTools\\' => 
+            array (
+                0 => __DIR__ . '/..' . '/nlp-tools/nlp-tools/src',
+            ),
+        ),
     );
 
     public static $classMap = array (

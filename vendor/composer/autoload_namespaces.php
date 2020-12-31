@@ -7,4 +7,5 @@ $baseDir = dirname($vendorDir);
 
 return array(
     'Sastrawi\\' => array($vendorDir . '/sastrawi/sastrawi/src'),
+    'NlpTools\\' => array($vendorDir . '/nlp-tools/nlp-tools/src'),
 );

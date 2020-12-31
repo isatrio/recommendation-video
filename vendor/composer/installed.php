@@ -6,7 +6,7 @@
     'aliases' => 
     array (
     ),
-    'reference' => 'd1a494d968e5f9624692bcf04b35f5a8924931bc',
+    'reference' => 'e2f29e2c11bb0da056d09cceaa29fdf83f8498a3',
     'name' => '__root__',
   ),
   'versions' => 
@@ -18,7 +18,16 @@
       'aliases' => 
       array (
       ),
-      'reference' => 'd1a494d968e5f9624692bcf04b35f5a8924931bc',
+      'reference' => 'e2f29e2c11bb0da056d09cceaa29fdf83f8498a3',
+    ),
+    'nlp-tools/nlp-tools' => 
+    array (
+      'pretty_version' => 'v0.1.3',
+      'version' => '0.1.3.0',
+      'aliases' => 
+      array (
+      ),
+      'reference' => 'bbccab0f3ca7277bdf7b292ba67ca644efd0cefe',
     ),
     'sastrawi/sastrawi' => 
     array (
