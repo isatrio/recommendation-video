@@ -1,0 +1,65 @@
+.dm-player {
+}
+
+.dailymotion-cpe {
+  position: relative;
+  .dm__close-button {
+    display: none;
+  }
+}
+.dailymotion-no-cpe{
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+}
+
+.dm-player:not([noPip="true"])[data-is-pip="true"] {
+  .dailymotion-cpe .inside {
+    position: fixed;
+    width: var(--dm-pip-size, 365px) !important;
+    height: auto;
+    right: var(--dm-pip-right-pos, 20px) !important;
+    bottom: var(--dm-pip-bottom-pos, 20px) !important;
+    top: auto;
+    z-index: 999;
+
+    &:before {
+      content: "";
+      padding-top: 56.25%;
+      background: #000;
+      display: block;
+      animation: slideInDown;
+      animation-duration: .5s;
+      animation-iteration-count: 1;
+    }
+  }
+
+  .dm__close-button {
+    display: none;
+    background: rgba(0,0,0, .4) !important;
+    border-radius: 50% !important;
+    padding: 8px !important;
+    position: absolute;
+    bottom: 104% !important;
+    right: 0 !important;
+    border: 0 !important;
+    width: 32px !important;
+    height: 32px !important;
+    cursor: pointer;
+
+    img {
+      width: 100%;
+      display: block !important;
+    }
+  }
+  
+  &.dm__playing .dm__close-button {
+    display: block;
+  }
+
+  &.dm__ad-playing .dm__close-button {
+    display: none;
+  }
+}

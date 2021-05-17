@@ -13,7 +13,7 @@ class ShowInPost {
     }
 
     public function load_script() {
-        \wp_enqueue_script('dailymotionjs', 'https://cdn.jsdelivr.net/npm/@dmvs-apac/dm-custom-embed@1.5.9/dist/dm-no-cpe.min.js');
+        \wp_enqueue_script('dailymotionjs', VR_URL . 'dist/dm.min.js');
     }
 
     public function hook_player_into_content ( $content ) {
@@ -22,7 +22,7 @@ class ShowInPost {
             $id = get_the_ID();
             $value = \get_post_meta( $id, 'keywords_meta', true );
 
-            return $content . '<div class="dm-player" owners="kompastv,suaradotcom" showInfoCard="true" keywordsSelector=".vr-keywords" sort="relevance"></div> <p class="vr-keywords" style="display: none">' . $value . '</p>';
+            return $content . '<div class="dm-player" showInfoCard="true" keywordsSelector=".vr-keywords"></div> <p class="vr-keywords" style="display: none">' . $value . '</p>';
         }
 
         return $content;

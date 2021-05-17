@@ -18,7 +18,7 @@ class KeywordsMeta {
     public function postMetaCallback($post) {
         $value = \get_post_meta( $post->ID, 'keywords_meta', true );
 
-        echo $value ? "Keywords: \r\n" . \esc_attr($value) : "Keywords not generated yet…";
+        echo $value ? "Generated keywords: \r\n" . \esc_attr($value) : "Keywords not generated yet…";
     }
 
     public function saveMetaData($post_id) {
