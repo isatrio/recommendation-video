@@ -140,27 +140,10 @@ export default class PlayerManager {
     }
 
     private loadDmPlayer(rootEl: HTMLDivElement): void {
-        const cpeEmbed = document.createElement("div");
-
-        // Keep current style in the root element
-        const currentStyle = rootEl.getAttribute('style');
-        // Set thumbnail
-        rootEl.setAttribute('style', '--dm-thumbnail:url(' + this.videoParams.thumbnail_480_url + ');' + ( currentStyle !== null) ? currentStyle : '');
-
-        /**
-         * Set attributes part
-         */
-        let queryString = "";
-
-        cpeEmbed.setAttribute("class", "dailymotion-cpe");
-
-        // end of set attributes
-        let cpeParams = {};
-
-        this.cpeParams = cpeParams;
+        const dmEmbed = document.createElement("div");
 
         // Append the element to the root player element
-        rootEl.appendChild(cpeEmbed);
+        rootEl.appendChild(dmEmbed);
 
         // Send to DmManager that element already created
         const ElementCreated = new CustomEvent('dm-video-holder-ready');
@@ -229,40 +212,31 @@ export default class PlayerManager {
     }
 
     private async searchVideo(): Promise<void> {
-        for ( let i = 0; i < this.playerParams.sort.length ; i++) {
-            // Start fetch the data
-            let video = await fetchData( await this.generateQuery(this.playerParams.sort[i]) );
+        let video = await fetchData( await this.generateQuery(this.playerParams.sort[0]) );
 
-            if (video) {
+        if (video) {
+            if (video.list.length > 0) {
+                this.setVideo(video.list[0], true);
+            } else if (this.playerParams.sort[0] === 'relevance') {
+
+                // Strip a string to try to get video one more time if there is no video found
+                this.keywords = this.keywords.substring(0, this.searchParams.search.lastIndexOf(' '));
+                video = await fetchData( await this.generateQuery(this.playerParams.sort[0]) );
+
                 if (video.list.length > 0) {
                     this.setVideo(video.list[0], true);
-                    break;
-                } else if (this.playerParams.sort[i] === 'relevance' || this.playerParams.sort[i] === 'recent') {
-
-                    // Strip a string to try to get video one more time if there is no video found
-                    this.keywords = this.keywords.substring(0, this.searchParams.search.lastIndexOf(' '));
-                    video = await fetchData( await this.generateQuery(this.playerParams.sort[i]) );
-
-                    if (video.list.length > 0) {
-                        this.setVideo(video.list[0], true);
-                        break;
-                    }
-
-                    // Let the looper know that video is found
-                    if (video.list.length > 0) break;
-                }
-
-                /**
-                 * This condition is to check if no videos found
-                 */
-                if (video.list.length === 0 && i === this.playerParams.sort.length - 1) {
-                    this.getFallbackVideo();
-                    break;
                 }
 
             }
-        }
 
+            /**
+             * This condition is to check if no videos found
+             */
+            if (video.list.length === 0 ) {
+                this.getFallbackVideo();
+            }
+
+        }
     }
 
     private async getFallbackVideo(): Promise<void> {
